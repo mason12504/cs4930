@@ -35,16 +35,25 @@ def inputLoop():
             encryptAES256CBC("alice.txt", "alice_ct.enc", key, iv)
             decryptAES256CBC("alice_ct.enc", "alice2.txt", key, iv)
             print("File encrypted and decrypted. ")
+            print("Original file snippet: ")
             printFileSnippet("alice.txt")
+            print("encrypted file snippet: ")
             printFileSnippet("alice_ct.enc")
+            print("decryption of the encrypted file snippet: ")
             printFileSnippet("alice2.txt")
 
         elif selection == 'e':
             fileName = input("Enter the file to encrypt: ")
             raw, ext =  os.path.splitext(fileName)
             encryptAES256CBC(fileName, raw + "_ct.enc", key, iv)
-            decryptAES256CBC(raw + "_ct.enc", raw+"2"+ext, key, iv)
             print("File", fileName, "Encrypted as: ", raw + "_ct.enc.")
+
+        elif selection == 'd':
+            fileName = input("Enter the file to decrypt: ")
+            raw, ext =  os.path.splitext(fileName)
+            ext = input("Enter the file extension for the decrypted output: ")
+            decryptAES256CBC(fileName, raw+"2."+ext, key, iv)
+            print("File", fileName, "Decrypted as: ", raw + "2."+ext)
 
 
 # encrypt a file with AES256CBC
@@ -71,7 +80,7 @@ def encryptAES256CBC(pt_path, ct_path, key, iv):
 def printFileSnippet(file_path):
     print(file_path)
     try:
-        with open(file_path, 'r', encoding='utf-8') as inFile:
+        with open(file_path, 'rb') as inFile:
             for i in range(3):
                 print(inFile.readline())
         inFile.close()
@@ -99,7 +108,7 @@ def decryptAES256CBC(ct_path, pt_path, key, iv):
     unPaddedOut += unpadder.finalize() # remove the padding
 
     # write the decrypted format back into the file
-    fileTextWrite(pt_path, unPaddedOut.decode('utf-8'))
+    fileByteWrite(pt_path, unPaddedOut)
     #print(unPaddedOut.decode('utf-8'))
 
 
